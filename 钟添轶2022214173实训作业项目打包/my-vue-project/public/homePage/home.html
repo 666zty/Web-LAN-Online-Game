@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <base href="../">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>主页</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f5f5dc;
+        }
+
+        .sidebar {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19);
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        .icon {
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+            margin-right: 8px;
+            filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(93deg) brightness(106%) contrast(101%);
+        }
+
+        .icon-btn {
+            display: flex;
+            align-items: center;
+            /* 垂直对齐 */
+            justify-content: flex-start;
+            /* 水平靠左对齐 */
+        }
+
+        #homeImg {
+            cursor: pointer;
+            transition: transform 2s, opacity 2s;
+        }
+
+        @keyframes moveToCenter {
+            0% {
+                transform: scale(1) rotate(0deg) translate(0, 0);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1) rotate(360deg) translate(0, 0);
+                opacity: 0;
+            }
+        }
+
+        #homeImg.animate {
+            animation: moveToCenter 2s forwards;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-auto col-md-2 bg-primary position-fixed h-100 sidebar rounded">
+                <div class="d-flex flex-column p-3 text-white">
+                    <ul class="nav nav-pills flex-column mb-auto">
+                        <li class="nav-item">
+                            <div class="col-12 d-none d-md-block">
+                                <img id="homeImg" src="img/homeImg.png" alt="" class="img-fluid mb-3">
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-outline-light mb-2 btn-lg w-100 flex-grow-1 shadow icon-btn"
+                                href="gamePage/chooseServer.html" id="start">
+                                <img src="img/play.svg" alt="" class="icon">开始游戏
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <button class="btn btn-outline-light mb-2 btn-lg w-100 flex-grow-1 shadow icon-btn" id="rank">
+                                <img src="img/trophy.svg" alt="" class="icon">排行榜
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="btn btn-outline-light mb-2 btn-lg w-100 flex-grow-1 shadow icon-btn" id="myinfo">
+                                <img src="img/contact_card.svg" alt="" class="icon">我的信息
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-outline-light mb-2 btn-lg w-100 flex-grow-1 shadow icon-btn" href="index.html">
+                                <img src="img/sign_out.svg" alt="" class="icon">退出登陆
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <div class="col-md-10 offset-md-2">
+                <div class="row align-items-center py-5">
+                    <div class="col-lg-12 px-lg-4 text-center">
+                        <h1 class="text-base text-primary text-uppercase mb-4 text-white p-4 bg-primary shadow rounded"
+                            id="title">猜拳游戏
+                        </h1>
+                        <div class="row align-items-center">
+                            <h2 class="text-base text-primary text-uppercase mb-4 p-4" id="secondHead">游戏规则
+                            </h2>
+                            <p class="text-base text-primary text-uppercase mb-4 p-4" id="text">1.
+                                玩家与玩家进行猜拳游戏，玩家选择石头、剪刀或布。
+                                </br> 2. 石头胜剪刀，剪刀胜布，布胜石头。
+                                </br> 3. 胜利者会扣除等同于出拳跟随的随机值的HP，平局则各扣等同于随机值的HP。
+                                </br> 4. 在出拳之前，可以选择消耗MP释放技能，也可以选择本小局投降。
+                                </br> 5. 双方都选定出拳后会进入小局结算扣除相应的MP和HP，并开启下一小局；当有一方的HP归零，游戏结束。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="alertModalLabel">提示</h5>
+                </div>
+                <div class="modal-body">
+                    确认注销账户？此操作不可逆！
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                        id="modalCloseButton">关闭</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal"
+                        id="modalConfirmButton">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+    <script src="jquery/jquery-3.7.1.js"></script>
+    <script>
+        function clearDynamicContent() {
+            document.getElementById('secondHead').textContent = '';
+            document.getElementById('text').textContent = '';
+
+            // 移除之前创建的表格
+            var existingTable = document.querySelector('table');
+            if (existingTable) {
+                existingTable.remove();
+            }
+
+            // 移除之前创建的 p 标签和按钮
+            var dynamicContent = document.querySelectorAll('.dynamic-content');
+            dynamicContent.forEach(function (element) {
+                element.remove();
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('rank').addEventListener('click', function () {
+                clearDynamicContent();
+
+                // 创建一个空表格
+                var table = document.createElement('table');
+                table.className = 'table table-bordered table-striped';
+
+                // 创建表头
+                var thead = document.createElement('thead');
+                var headerRow = document.createElement('tr');
+                var headers = ['排名', '用户名', '分数'];
+                headers.forEach(function (headerText) {
+                    var th = document.createElement('th');
+                    th.textContent = headerText;
+                    headerRow.appendChild(th);
+                });
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
+
+                // 创建表体
+                var tbody = document.createElement('tbody');
+
+                // 使用fetch从API获取数据
+                fetch('http://localhost:8443/users', {
+                    method: 'GET',
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json()
+                        } else if (response.status === 204) {
+                            alert('数据库错误，没有用户数据');
+                            throw new Error('No content');
+                        } else if (response.status === 500) {
+                            alert('服务器错误');
+                            throw new Error('Server error');
+                        } else {
+                            throw new Error('Network response was not ok: ' + response.statusText);
+                        }
+                    })
+                    .then(data => {
+                        data.forEach(function (item, index) {
+                            var row = document.createElement('tr');
+                            var rankTd = document.createElement('td');
+                            rankTd.textContent = index + 1; // 使用索引作为排名
+                            row.appendChild(rankTd);
+
+                            var usernameTd = document.createElement('td');
+                            usernameTd.textContent = item.username;
+                            row.appendChild(usernameTd);
+
+                            var scoreTd = document.createElement('td');
+                            scoreTd.textContent = item.score;
+                            row.appendChild(scoreTd);
+
+                            tbody.appendChild(row);
+                        });
+                        table.appendChild(tbody);
+
+                        // 将表格插入到 h1 元素下面
+                        var titleElement = document.getElementById('title');
+                        titleElement.insertAdjacentElement('afterend', table);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data:', error)
+                        alert('获取数据失败，请重试');
+                    });
+
+                event.preventDefault();
+            });
+
+            document.getElementById('myinfo').addEventListener('click', function () {
+                document.getElementById('title').textContent = '我的信息';
+                clearDynamicContent();
+
+                // 创建一个容器 div
+                var container = document.createElement('div');
+                container.className = 'dynamic-content container mt-4';
+
+                // 创建两个 p 标签
+                var p1 = document.createElement('p');
+                p1.className = 'dynamic-content';
+                p1.id = 'username';
+                p1.textContent = '用户名: ';
+                var p2 = document.createElement('p');
+                p2.className = 'dynamic-content';
+                p2.id = 'score';
+                p2.textContent = '胜点: ';
+
+                // 创建一个按钮容器 div
+                var btnContainer = document.createElement('div');
+                btnContainer.className = 'dynamic-content d-flex justify-content-center mt-2';
+                var btn1Div = document.createElement('div');
+                btn1Div.className = 'col-6 mr-2';
+                var btn2Div = document.createElement('div');
+                btn2Div.className = 'col-6';
+
+                // 创建两个按钮
+                var btn1 = document.createElement('button');
+                btn1.className = 'btn btn-primary dynamic-content flex-grow-1 mr-2 shadow';
+                btn1.textContent = '修改密码';
+                btn1.addEventListener('click', function () {
+                    window.location.href = 'homePage/changePassword.html';
+                });
+                var btn2 = document.createElement('button');
+                btn2.className = 'btn btn-danger dynamic-content flex-grow-1 shadow';
+                btn2.textContent = '注销账户';
+                btn2.addEventListener('click', function () {
+                    $('#alertModal').modal('show');
+                });
+
+                // 将按钮添加到按钮容器 div 中
+                btn1Div.appendChild(btn1);
+                btn2Div.appendChild(btn2);
+                btnContainer.appendChild(btn1Div);
+                btnContainer.appendChild(btn2Div);
+
+                // 将 p 标签和按钮容器添加到容器 div 中
+                container.appendChild(p1);
+                container.appendChild(p2);
+                container.appendChild(btnContainer);
+
+                // 将容器 div 插入到 h1 元素下面
+                var titleElement = document.getElementById('title');
+                titleElement.insertAdjacentElement('afterend', container);
+
+                fetch('http://localhost:8443/users/userInfo', {
+                    method: 'GET',
+                    credentials: 'include' // 确保携带 Cookie
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('score').textContent = '胜点: ' + data.score;
+                        document.getElementById('username').textContent = '用户名: ' + data.username;
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        document.getElementById('score').textContent = '胜点: 获取分数失败';
+                        document.getElementById('username').textContent = '用户名: 获取用户名失败';
+                    });
+
+                event.preventDefault();
+            });
+
+            document.getElementById('start').addEventListener('click', function (event) {
+                event.preventDefault();
+                var homeImg = document.getElementById('homeImg');
+                homeImg.classList.add('animate');
+                setTimeout(function () {
+                    window.location.href = event.target.href;
+                }, 1700);
+            });
+
+            document.getElementById('modalCloseButton').addEventListener('click', function () {
+                $('#alertModal').modal('hide');
+            });
+
+            document.getElementById('modalConfirmButton').addEventListener('click', function () {
+                $('#alertModal').modal('hide');
+                fetch('http://localhost:8443/users/userDelete', {
+                    method: 'Post',
+                    credentials: 'include' // 确保携带 Cookie
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            alert('注销成功');
+                            window.location.href = 'index.html';
+                        } else if (response.status === 404) {
+                            alert('请先登录');
+                        }
+                        else {
+                            alert('注销失败，请重试');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('注销失败，请重试');
+                    });
+                event.preventDefault();
+            });
+
+            document.getElementById('homeImg').addEventListener('click', function () {
+                location.reload();
+            });
+        });
+    </script>
+</body>
+
+</html>

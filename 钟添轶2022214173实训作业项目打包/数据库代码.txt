@@ -1,0 +1,13 @@
+CREATE TABLE `users` (
+	`id` INT(10,0) NOT NULL AUTO_INCREMENT,
+	`username` VARCHAR(255) NOT NULL COLLATE 'armscii8_bin',
+	`password` VARCHAR(255) NOT NULL COLLATE 'armscii8_bin',
+	`realname` VARCHAR(255) NOT NULL COLLATE 'armscii8_bin',
+	`score` INT(10,0) NULL DEFAULT '0',
+	PRIMARY KEY (`id`) USING BTREE,
+	UNIQUE INDEX `unique_username` (`username`) USING BTREE
+)
+COLLATE='armscii8_bin'
+ENGINE=InnoDB
+AUTO_INCREMENT=10
+;

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <base href="./">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>注册</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <style>
+        @keyframes rotateFadeOut {
+            0% {
+                opacity: 1;
+                transform: rotate(0deg);
+            }
+
+            100% {
+                opacity: 0;
+                transform: rotate(360deg);
+            }
+        }
+
+        .rotate-fade-out {
+            animation: rotateFadeOut 1s forwards;
+        }
+
+        .scroll-up {
+            transition: transform 1s;
+            transform: translateY(-100px);
+        }
+
+        body {
+            background-color: #f5f5dc;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-holder d-flex align-items-center">
+        <div class="container">
+            <div class="row align-items-center py-5">
+                <div class="col-3 col-lg-3 mx-auto mb-5 mb-lg-0">
+                    <div class="pr-lg-5"><img id="homeImg" src="img/homeImg.png" alt="" class="img-fluid"></div>
+                </div>
+            </div>
+            <div class="row align-items-center py-5" id="content">
+                <div class="col-lg-12 px-lg-4">
+                    <div class="col-lg-12 px-lg-4 text-center">
+                        <h1 class="text-base text-primary text-uppercase mb-4 text-white p-4 bg-primary shadow">注册</h1>
+                        <div class="row align-items-center">
+                            <div class="col-lg-6 mb-3">
+                                <input type="text" class="form-control" placeholder="用户ID" id="userIdInput">
+                            </div>
+                            <div class="col-lg-6 mb-3">
+                                <input type="password" class="form-control" placeholder="用户密码" id="passwordInput">
+                            </div>
+                            <div class="col-lg-6 mb-3">
+                                <input type="password" class="form-control" placeholder="确认密码"
+                                    id="confirmPasswordInput">
+                            </div>
+                            <div class="col-lg-6 mb-3">
+                                <input type="text" class="form-control" placeholder="真实姓名（用于找回密码）" id="realnameInput">
+                            </div>
+                        </div>
+                        <div class="row justify-content-center align-items-end">
+                            <div class="d-flex w-100 justify-content-center">
+                                <div class="col-3 mb-3 px-1">
+                                    <button class="btn btn-primary btn-lg w-100 flex-grow-1 shadow" type="submit"
+                                        id="registerButton">注册</button>
+                                </div>
+                                <div class="col-3 mb-3 px-1">
+                                    <a class="btn btn-primary btn-lg w-100 flex-grow-1 text-nowrap shadow"
+                                        href="index.html">返回登陆</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="alertModalLabel">提示</h5>
+                </div>
+                <div class="modal-body">
+                    请输入所有必填项。
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                        id="modalCloseButton">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="alertModal2" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="alertModalLabel">提示</h5>
+                </div>
+                <div class="modal-body">
+                    两次输入密码不一致，请确认密码。
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                        id="modalCloseButton2">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="jquery/jquery-3.7.1.js"></script>
+    <script src="bootstrap/js/bootstrap.bundle.js"></script>
+
+    <script>
+        document.getElementById('userIdInput').addEventListener('focus', function () {
+            document.getElementById('homeImg').classList.add('rotate-fade-out');
+            document.getElementById('content').classList.add('scroll-up');
+        });
+
+        document.getElementById('registerButton').addEventListener('click', function (event) {
+            var userId = document.getElementById('userIdInput').value;
+            var password = document.getElementById('passwordInput').value;
+            var confirmPassword = document.getElementById('confirmPasswordInput').value;
+            var realname = document.getElementById('realnameInput').value;
+
+            if (!userId || !password || !confirmPassword || !realname) {
+                event.preventDefault();
+                $('#alertModal').modal('show');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                event.preventDefault();
+                $('#alertModal2').modal('show');
+                return;
+            }
+
+            var user = {
+                username: userId,
+                password: password,
+                realname: realname
+            };
+
+            fetch('http://localhost:8443/users/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(user)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('注册成功！');
+                        window.location.href = 'index.html';
+                    } else if (response.status === 409) {
+                        alert('用户名已存在，请选择其他用户名。');
+                    }
+                    else {
+                        alert('注册失败，请重试。');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('注册失败，请重试。');
+                });
+
+            event.preventDefault();
+        });
+
+        document.getElementById('modalCloseButton').addEventListener('click', function () {
+            $('#alertModal').modal('hide');
+        });
+
+        document.getElementById('modalCloseButton2').addEventListener('click', function () {
+            $('#alertModal2').modal('hide');
+        });
+    </script>
+</body>
+
+</html>

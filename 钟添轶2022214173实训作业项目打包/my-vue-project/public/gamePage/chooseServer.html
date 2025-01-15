@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <base href="../">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>创建游戏</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <script src="gamePage/websocket.js"></script>
+    <style>
+        body {
+            background-color: #f5f5dc;
+            position: relative;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .rotating-img {
+            animation: rotate 30s linear infinite;
+            position: fixed;
+            top: 40%;
+            left: 10%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            width: 80%;
+            height: auto;
+            opacity: 0.1;
+        }
+
+        .btn-group-toggle .btn {
+            width: 150px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <img src="img/homeImg.png" alt="旋转图片" class="rotating-img">
+    <div class="container">
+        <div class="row align-items-center py-5">
+            <div class="col text-center bg-light p-5 rounded shadow">
+                <h1 class="display-4">猜拳游戏</h1>
+            </div>
+        </div>
+        <div class="row align-items-center py-5 bg-secondary text-white rounded shadow">
+            <h2 class="mt-4 mb-4 text-light text-center">选择加入游戏或是作为主机创建游戏</h2>
+        </div>
+        <div class="row mt-4">
+            <div class="col text-center">
+                <button class="btn btn-primary mx-2 shadow" id="create">作为主机</button>
+                <button class="btn btn-primary mx-2 shadow" id="add">加入游戏</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="alertModal1" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel"
+        aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="alertModalLabel">提示</h5>
+                </div>
+                <div class="modal-body" id="RoomIDShow">
+                    等待用户连接...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="alertModal2" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="alertModalLabel">提示</h5>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="userInput" class="form-label">请输入RoomID:</label>
+                            <input type="text" class="form-control" id="RoomIDInput" placeholder="在这里输入...">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="submitButton">提交</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="jquery/jquery-3.7.1.js"></script>
+    <script src="bootstrap/js/bootstrap.bundle.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('create').addEventListener('click', function () {
+                initWebSocket();
+                setTimeout(createRoom, 1000);
+                $('#alertModal1').modal({
+                    backdrop: 'static',
+                    keyboard: false
+                });
+                $('#alertModal1').modal('show');
+            });
+            document.getElementById('add').addEventListener('click', function () {
+                $('#alertModal2').modal({
+                    backdrop: 'static',
+                    keyboard: false
+                });
+                $('#alertModal2').modal('show');
+            });
+            document.getElementById('submitButton').addEventListener('click', function () {
+                var RoomIDInput = document.getElementById('RoomIDInput').value;
+                initWebSocket();
+                setTimeout(function () {
+                    joinRoom(RoomIDInput);
+                }, 1000);
+            });
+        });
+       
+    </script>
+</body>
+
+</html>

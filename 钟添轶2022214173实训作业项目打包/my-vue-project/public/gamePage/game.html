@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <base href="../">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>猜拳游戏</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <script src="gamePage/websocket.js"></script>
+    <style>
+        body {
+            background-color: #f5f5dc;
+            position: relative;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .rotating-img {
+            animation: rotate 30s linear infinite;
+            position: fixed;
+            top: 40%;
+            left: 10%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            width: 80%;
+            height: auto;
+            opacity: 0.1;
+        }
+
+        .btn-group-toggle .btn {
+            width: 150px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <img src="img/homeImg.png" alt="旋转图片" class="rotating-img">
+    <div class="container">
+        <div class="row align-items-center py-5">
+            <div class="col text-center bg-light p-5 rounded shadow">
+                <h1 class="display-4">猜拳游戏</h1>
+                <h5 class="mt-3">第几小局</h5>
+                <div class="row mt-4">
+                    <div class="col-6">
+                        <div class="p-3 border border-danger text-danger rounded" style="background-color: transparent;">血量: 50</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 border border-primary text-primary rounded" style="background-color: transparent;">蓝量: 20</div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-6">
+                        <div class="p-3 border border-warning text-warning rounded" style="background-color: transparent;">敌人血量: 50</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 border border-info text-info rounded" style="background-color: transparent;">敌人蓝量: 20</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row align-items-center py-5 bg-secondary text-white rounded shadow">
+            <div class="col text-center ">
+                <div class="btn-group btn-group-toggle mb-3" data-toggle="buttons">
+                    <label class="btn btn-outline-light text-nowrap">
+                        <input type="radio" name="options" id="scissors" autocomplete="off" checked> 剪刀 ?HP
+                    </label>
+                    <label class="btn btn-outline-light text-nowrap">
+                        <input type="radio" name="options" id="rock" autocomplete="off"> 石头 ?HP
+                    </label>
+                    <label class="btn btn-outline-light text-nowrap">
+                        <input type="radio" name="options" id="paper" autocomplete="off"> 布 ?HP
+                    </label>
+                </div>
+            </div>
+            <div class="d-flex justify-content-center">
+                <div class="form-check mx-2">
+                    <input class="form-check-input" type="checkbox" id="reroll" value="option1">
+                    <label class="form-check-label" for="reroll">重掷骰子 4MP</label>
+                </div>
+                <div class="form-check mx-2">
+                    <input class="form-check-input" type="checkbox" id="cheatDice" value="option2">
+                    <label class="form-check-label" for="cheatDice">作弊骰子 10MP</label>
+                </div>
+                <div class="form-check mx-2">
+                    <input class="form-check-input" type="checkbox" id="shield" value="option3">
+                    <label class="form-check-label" for="shield">护盾 6MP</label>
+                </div>
+                <div class="form-check mx-2">
+                    <input class="form-check-input" type="checkbox" id="sureWin" value="option4">
+                    <label class="form-check-label" for="sureWin">必胜之拳 8MP</label>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col text-center">
+                <button class="btn btn-primary mx-2 shadow">确认</button>
+                <button class="btn btn-danger mx-2 shadow">投降</button>
+            </div>
+        </div>
+    </div>
+    <script src="jquery/jquery-3.7.1.js"></script>
+    <script src="bootstrap/js/bootstrap.bundle.js"></script>
+</body>
+
+</html>
